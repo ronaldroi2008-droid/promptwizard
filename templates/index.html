@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel">
+  <form id="genForm" onsubmit="return false;">
+    <div class="grid">
+      <label>Quick Preset
+        <select id="presetSelect" onchange="applyPreset(this.value)">
+          <option value="">-- choose preset --</option>
+          <option value="ecom_ig">E-commerce IG Caption</option>
+          <option value="tiktok_hook">TikTok Hook</option>
+          <option value="email_subject">Email Subject Line</option>
+          <optgroup id="myPresets" label="My Presets"></optgroup>
+        </select>
+      </label>
+
+      <label>Preset Name (to save)
+        <input id="presetName" placeholder="e.g., My Chamomile IG Set" />
+      </label>
+
+      <label>Target Audience
+        <input name="audience" placeholder="e.g., Filipino freelancers" required />
+      </label>
+
+      <label>Tone
+        <select name="tone">
+          <option>Friendly</option>
+          <option>Professional</option>
+          <option>Persuasive</option>
+          <option>Casual</option>
+          <option>Authoritative</option>
+          <option>Inspirational</option>
+        </select>
+      </label>
+
+      <label>Goal
+        <select name="goal">
+          <option>Instagram caption</option>
+          <option>Facebook post</option>
+          <option>TikTok script</option>
+          <option>Product description</option>
+          <option>Email subject lines</option>
+          <option>Blog outline</option>
+        </select>
+      </label>
+
+      <label>Platform / Context
+        <input name="platform" placeholder="e.g., Instagram Reels" />
+      </label>
+
+      <label>Language
+        <select name="language">
+          <option>English</option>
+          <option>Tagalog</option>
+          <option>Taglish</option>
+        </select>
+      </label>
+
+      <label>Constraints
+        <input name="constraints" placeholder="e.g., 120 chars, include CTA" />
+      </label>
+
+      <label>Brand Voice
+        <input name="brand" placeholder="e.g., witty, premium" />
+      </label>
+
+      <label>Key Details
+        <textarea name="details" rows="3" placeholder="e.g., organic soap, ₱199 launch"></textarea>
+      </label>
+    </div>
+
+    <div class="actions">
+      <button id="buildBtn" type="button">Build Prompt</button>
+      {% if enable_gpt %}
+      <button id="enhanceBtn" class="alt" type="button">Enhance Detailed</button>
+      <button id="enhanceConciseBtn" class="alt" type="button">Enhance Concise</button>
+      {% endif %}
+      <button id="copyBtn" class="ghost" type="button">Copy</button>
+      <button id="copyConciseBtn" class="ghost" type="button">Copy Concise</button>
+      <button id="saveBtn" class="ghost" type="button">Save</button>
+      <span id="msg" class="msg"></span>
+    </div>
+
+    {% if show_usage %}
+      <div id="usageBar" class="usagebar" style="display:none">
+        <span id="usageBadge" class="badge">Usage: –</span>
+        {% if show_timer %}<span id="resetTimerUsage" class="small">Resets in: –</span>{% endif %}
+      </div>
+
+      <div id="creditsBar" class="usagebar" style="display:none">
+        <span id="creditsBadge" class="badge">Credits: –</span>
+        {% if show_timer %}<span id="resetTimerCredits" class="small">Resets in: –</span>{% endif %}
+      </div>
+    {% endif %}
+  </form>
+</section>
+
+<section class="panel">
+  <h3>Output Prompt (Detailed)</h3>
+  <textarea id="output" rows="10"></textarea>
+</section>
+
+<section class="panel">
+  <h3>Concise Prompt (Copy-ready)</h3>
+  <textarea id="outputConcise" rows="10"></textarea>
+</section>
+
+<section class="panel">
+  <h3>My Presets (local to this browser)</h3>
+  <div id="presetList"></div>
+</section>
+
+<section class="panel">
+  <h3>History</h3>
+  <div id="history"></div>
+</section>
+{% endblock %}
