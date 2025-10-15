@@ -1,17 +1,20 @@
-// --------- DOM refs ---------
-const form = document.getElementById('genForm');
-const output = document.getElementById('output');
-const outputConcise = document.getElementById('outputConcise');
-const msg = document.getElementById('msg');
-const historyDiv = document.getElementById('history');
+// ---------- helpers ----------
+const $ = (s, el=document) => el.querySelector(s);
+
+// ---------- DOM refs ----------
+const form = $('#genForm');
+const output = $('#output');
+const outputConcise = $('#outputConcise');
+const msg = $('#msg');
+const historyDiv = $('#history');
 
 const LS_KEY = 'pw_presets_v1';
 
-// --------- Build / Enhance / Copy / Save ---------
+// ---------- Build / Enhance / Copy / Save ----------
 async function buildPrompt(e){
   try{
     if(e) e.preventDefault();
-    msg.textContent = 'Building…';
+    if(msg) msg.textContent = 'Building…';
     const fd = new FormData(form);
     const payload = Object.fromEntries(fd.entries());
 
@@ -27,21 +30,21 @@ async function buildPrompt(e){
     }
 
     const data = await r.json();
-    output.value = data.prompt || '';
+    if(output) output.value = data.prompt || '';
     if(outputConcise) outputConcise.value = data.concise || '';
-    msg.textContent = data.ok ? 'Done.' : (data.error || 'Error');
+    if(msg) msg.textContent = data.ok ? 'Done.' : (data.error || 'Error');
   }catch(err){
     console.error(err);
-    msg.textContent = (err && err.message) ? err.message : 'Build error';
+    if(msg) msg.textContent = (err && err.message) ? err.message : 'Build error';
   }
 }
 
 async function enhanceField(fieldId){
   const box = document.getElementById(fieldId);
   const text = (box?.value || '').trim();
-  if(!text){ msg.textContent='Nothing to enhance.'; return; }
+  if(!text){ if(msg) msg.textContent='Nothing to enhance.'; return; }
   try{
-    msg.textContent = 'Enhancing with GPT…';
+    if(msg) msg.textContent = 'Enhancing…';
     const r = await fetch('/enhance', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -50,28 +53,28 @@ async function enhanceField(fieldId){
     const data = await r.json();
     if(!r.ok) throw new Error(data.error || `${r.status} ${r.statusText}`);
     if(data.prompt) box.value = data.prompt;
-    msg.textContent = 'Enhanced.';
-    if(data.usage && typeof updateUsageUI==='function') updateUsageUI(data.usage);
-    if(data.credits && typeof updateCreditsUI==='function') updateCreditsUI(data.credits);
+    if(msg) msg.textContent = 'Enhanced.';
+    if(data.usage)  updateUsageUI?.(data.usage);
+    if(data.credits)updateCreditsUI?.(data.credits);
   }catch(err){
     console.error(err);
-    msg.textContent = (err && err.message) ? err.message : 'Enhance error';
+    if(msg) msg.textContent = (err && err.message) ? err.message : 'Enhance error';
   }
 }
 
-async function copyOut(e){ if(e) e.preventDefault(); await navigator.clipboard.writeText(output.value||''); msg.textContent='Copied.'; }
-async function copyConcise(e){ if(e) e.preventDefault(); await navigator.clipboard.writeText(outputConcise.value||''); msg.textContent='Concise copied.'; }
+async function copyOut(e){ if(e) e.preventDefault(); await navigator.clipboard.writeText(output?.value||''); if(msg) msg.textContent='Copied.'; }
+async function copyConcise(e){ if(e) e.preventDefault(); await navigator.clipboard.writeText(outputConcise?.value||''); if(msg) msg.textContent='Concise copied.'; }
 
 async function saveItem(e){
   if(e) e.preventDefault();
   try{
-    const r = await fetch('/save', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ prompt: output.value })});
+    const r = await fetch('/save', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ prompt: output?.value||'' })});
     const d = await r.json();
-    msg.textContent = d.ok ? 'Saved.' : 'Error saving';
+    if(msg) msg.textContent = d.ok ? 'Saved.' : 'Error saving';
     loadHistory();
   }catch(err){
     console.error(err);
-    msg.textContent = 'Save error';
+    if(msg) msg.textContent = 'Save error';
   }
 }
 
@@ -79,6 +82,7 @@ async function loadHistory(){
   try{
     const r = await fetch('/history');
     const d = await r.json();
+    if(!historyDiv) return;
     historyDiv.innerHTML = '';
     (d.items||[]).forEach(it=>{
       const div=document.createElement('div'); div.className='item';
@@ -88,9 +92,9 @@ async function loadHistory(){
   }catch(e){ /* ignore */ }
 }
 
-// --------- Presets (local) ---------
+// ---------- Presets (local only) ----------
 function applyPreset(val){
-  if(val.startsWith?.('user:')){ applyUserPreset(val.slice(5)); return; }
+  if(val?.startsWith('user:')){ applyUserPreset(val.slice(5)); return; }
   if(val==='ecom_ig'){
     form.audience.value='Online shoppers, young adults';
     form.tone.value='Friendly';
@@ -160,7 +164,7 @@ function applyUserPreset(name){
   Object.entries(p).forEach(([k,v])=>{ if(form[k]!==undefined) form[k].value=v; });
 }
 
-// --------- Usage/Credits bars ---------
+// ---------- Usage/Credits bars ----------
 let resetTimerInterval=null;
 function formatHMS(sec){
   sec=Math.max(0,Math.floor(sec));
@@ -197,9 +201,6 @@ async function refreshUsage(){
 function updateCreditsUI(c){
   const tag=document.getElementById('creditsBadge'); if(!tag) return;
   tag.textContent=`Credits: ${c.balance}/${c.max_balance}`;
-  const start = c.max_balance || 100;
-  const used_pct = start ? ((start - c.balance)/start)*100 : 0;
-  if(used_pct >= 80) tag.classList.add('warn'); else tag.classList.remove('warn');
   if(c.reset_at) startCountdown('resetTimerCredits', c.reset_at);
 }
 async function refreshCredits(){
@@ -209,12 +210,14 @@ async function refreshCredits(){
   }catch(e){}
 }
 
-// Auto-detect mode via /health
+// Paid/free detection resilient to "paid" or "paid_credits"
 async function initModeBars(){
   try{
     const r = await fetch('/health');
     const h = await r.json();
-    const isPaid = (h.mode === 'paid_credits');
+    const mode = (h.mode||'').toLowerCase();
+    const isPaid = (mode === 'paid' || mode === 'paid_credits');
+
     const usageBar = document.getElementById('usageBar');
     const creditsBar = document.getElementById('creditsBar');
 
@@ -228,13 +231,71 @@ async function initModeBars(){
       refreshUsage();
     }
   }catch(e){
-    // default to usage bar if /health fails
-    const usageBar = document.getElementById('usageBar');
-    if(usageBar) usageBar.style.display = 'flex';
+    // fallback: try credits endpoint; if it returns balance, assume paid
+    try{
+      const r=await fetch('/credits_status');
+      if(r.ok){
+        const c=await r.json();
+        if(typeof c.balance === 'number'){
+          document.getElementById('creditsBar')?.style.setProperty('display','flex');
+          document.getElementById('usageBar')?.style.setProperty('display','none');
+          updateCreditsUI(c);
+          return;
+        }
+      }
+    }catch(_){}
+    // default to free meter
+    document.getElementById('usageBar')?.style.setProperty('display','flex');
   }
 }
 
-// --------- Listeners ---------
+// ---------- Theme toggle ----------
+(function themeInit(){
+  const root = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  function apply(theme){
+    root.setAttribute('data-theme', theme);
+    if (btn) btn.textContent = theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+  }
+  const saved = localStorage.getItem('theme') || 'light';
+  apply(saved);
+  btn?.addEventListener('click', () => {
+    const cur = root.getAttribute('data-theme') || 'light';
+    const next = cur === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', next); apply(next);
+  });
+})();
+
+// ---------- Free CTA + Signup modal ----------
+document.getElementById('ctaFree')?.addEventListener('click', () => {
+  if (window.CAPTURE_REQUIRED) {
+    document.getElementById('signupModal').style.display = 'grid';
+  } else if (window.FREE_PROMPTS_URL) {
+    // direct link or local /static PDF
+    window.location.href = window.FREE_PROMPTS_URL;
+  } else {
+    window.location.href = '/free';
+  }
+});
+document.getElementById('signupClose')?.addEventListener('click', () => {
+  document.getElementById('signupModal').style.display = 'none';
+});
+document.getElementById('signupSubmit')?.addEventListener('click', async () => {
+  const email = (document.getElementById('signupEmail')?.value || '').trim();
+  const msgEl = document.getElementById('signupMsg');
+  if (!email) { msgEl.textContent = 'Enter a valid email'; return; }
+  msgEl.textContent = 'Sending…';
+  try {
+    const r = await fetch('/api/signup', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, source: 'free' })});
+    const data = await r.json();
+    if(!r.ok) throw new Error(data.error || `${r.status} ${r.statusText}`);
+    msgEl.innerHTML = `Done! <a href="${data.download_url}" target="_blank" rel="noopener">Download here</a>`;
+  } catch (e) {
+    msgEl.textContent = e.message || 'Error';
+  }
+});
+
+// ---------- Listeners ----------
 document.getElementById('buildBtn')?.addEventListener('click', buildPrompt);
 document.getElementById('enhanceBtn')?.addEventListener('click', (e)=>{ e.preventDefault(); enhanceField('output'); });
 document.getElementById('enhanceConciseBtn')?.addEventListener('click', (e)=>{ e.preventDefault(); enhanceField('outputConcise'); });
@@ -242,7 +303,7 @@ document.getElementById('copyBtn')?.addEventListener('click', (e)=>{ e.preventDe
 document.getElementById('copyConciseBtn')?.addEventListener('click', (e)=>{ e.preventDefault(); copyConcise(e); });
 document.getElementById('saveBtn')?.addEventListener('click', (e)=>{ e.preventDefault(); saveItem(e); });
 
-// --------- Init ---------
+// ---------- Init ----------
 window.addEventListener('load', ()=>{
   loadHistory();
   renderUserPresets?.();
