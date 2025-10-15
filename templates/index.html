@@ -1,116 +1,284 @@
-{% extends "base.html" %}
-{% block content %}
-<section class="panel">
-  <form id="genForm" onsubmit="return false;">
-    <div class="grid">
-      <label>Quick Preset
-        <select id="presetSelect" onchange="applyPreset(this.value)">
-          <option value="">-- choose preset --</option>
-          <option value="ecom_ig">E-commerce IG Caption</option>
-          <option value="tiktok_hook">TikTok Hook</option>
-          <option value="email_subject">Email Subject Line</option>
-          <optgroup id="myPresets" label="My Presets"></optgroup>
-        </select>
-      </label>
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ app_name }}</title>
+    <link rel="stylesheet" href="/static/styles.css?v={{ build_id }}">
+  </head>
+  <body>
+    <!-- Brand bar -->
+    <div class="brandbar">
+      <div class="brand-left">
+        <div class="logo">✨</div>
+        <div>
+          <div class="brand-title">{{ app_name }}</div>
+          <div class="brand-sub">Form-based AI prompt builder. Offline builder + optional GPT enhancement.</div>
+        </div>
+      </div>
+      <div class="brand-right">
+        <a class="pill" id="ctaFree" href="javascript:void(0)">🎁 300 Free Prompts</a>
 
-      <label>Preset Name (to save)
-        <input id="presetName" placeholder="e.g., My Chamomile IG Set" />
-      </label>
+        {% if not rollover_mode %}
+          <!-- SHOW only on FREE mode -->
+          <a class="pill primary" id="upgradeBtn" href="javascript:void(0)">⬆️ Upgrade</a>
+        {% endif %}
 
-      <label>Target Audience
-        <input name="audience" placeholder="e.g., Filipino freelancers" required />
-      </label>
-
-      <label>Tone
-        <select name="tone">
-          <option>Friendly</option>
-          <option>Professional</option>
-          <option>Persuasive</option>
-          <option>Casual</option>
-          <option>Authoritative</option>
-          <option>Inspirational</option>
-        </select>
-      </label>
-
-      <label>Goal
-        <select name="goal">
-          <option>Instagram caption</option>
-          <option>Facebook post</option>
-          <option>TikTok script</option>
-          <option>Product description</option>
-          <option>Email subject lines</option>
-          <option>Blog outline</option>
-        </select>
-      </label>
-
-      <label>Platform / Context
-        <input name="platform" placeholder="e.g., Instagram Reels" />
-      </label>
-
-      <label>Language
-        <select name="language">
-          <option>English</option>
-          <option>Tagalog</option>
-          <option>Taglish</option>
-        </select>
-      </label>
-
-      <label>Constraints
-        <input name="constraints" placeholder="e.g., 120 chars, include CTA" />
-      </label>
-
-      <label>Brand Voice
-        <input name="brand" placeholder="e.g., witty, premium" />
-      </label>
-
-      <label>Key Details
-        <textarea name="details" rows="3" placeholder="e.g., organic soap, ₱199 launch"></textarea>
-      </label>
+        <span class="pill" id="planBadge">{{ 'PAID' if rollover_mode else 'FREE' }}</span>
+        <button class="pill" id="themeToggle">🌙 Dark</button>
+      </div>
     </div>
 
-    <div class="actions">
-      <button id="buildBtn" type="button">Build Prompt</button>
-      {% if enable_gpt %}
-      <button id="enhanceBtn" class="alt" type="button">Enhance Detailed</button>
-      <button id="enhanceConciseBtn" class="alt" type="button">Enhance Concise</button>
-      {% endif %}
-      <button id="copyBtn" class="ghost" type="button">Copy</button>
-      <button id="copyConciseBtn" class="ghost" type="button">Copy Concise</button>
-      <button id="saveBtn" class="ghost" type="button">Save</button>
-      <span id="msg" class="msg"></span>
+    <div class="wrap">
+      <!-- === OLD STYLE: 2-column form layout === -->
+      <form id="genForm" class="form-classic">
+        <div class="panel">
+          <div class="grid-2">
+            <div class="control">
+              <label class="label">Quick Preset</label>
+              <select id="quickPreset">
+                <option value="">-- choose preset --</option>
+              </select>
+            </div>
+            <div class="control">
+              <label class="label">Preset Name (to save)</label>
+              <input id="presetName" placeholder="e.g., My Chamomile IG Set" />
+            </div>
+
+            <div class="control">
+              <label class="label">Tone</label>
+              <input id="tone" name="tone" list="toneList" placeholder="e.g., Friendly" />
+            </div>
+            <div class="control">
+              <label class="label">Goal</label>
+              <input id="goal" name="goal" list="goalList" placeholder="e.g., Instagram caption" />
+            </div>
+
+            <div class="control">
+              <label class="label">Language</label>
+              <select id="language" name="language">
+                <option>English</option><option>Tagalog</option><option>Taglish</option>
+              </select>
+            </div>
+            <div class="control">
+              <label class="label">Constraints</label>
+              <input id="constraints" name="constraints" placeholder="e.g., 120 chars, include CTA" />
+            </div>
+
+            <div class="control">
+              <label class="label">Target Audience</label>
+              <input id="audience" name="audience" list="audList" placeholder="e.g., Filipino freelancers" />
+            </div>
+            <div class="control">
+              <label class="label">Platform / Context</label>
+              <input id="platform" name="platform" list="platList" placeholder="e.g., Instagram Reels" />
+            </div>
+
+            <div class="control">
+              <label class="label">Brand Voice</label>
+              <input id="brand" name="brand" list="brandList" placeholder="e.g., witty, premium" />
+            </div>
+          </div>
+
+          <div class="control" style="margin-top:6px;">
+            <label class="label">Key Details</label>
+            <textarea id="details" name="details" rows="4" placeholder="e.g., organic soap, ₱199 launch, include 2 trending hashtags"></textarea>
+          </div>
+
+          <!-- Actions row (compact height) -->
+          <div class="actions">
+            <button type="button" class="btn primary" id="buildBtn">Build Prompt</button>
+
+            <div class="seg">
+              <label class="seg-label">Enhance:</label>
+              <select id="enhMode" class="btn">
+                <option value="short">Short</option>
+                <option value="medium" selected>Medium</option>
+                <option value="detailed">Detailed</option>
+              </select>
+              <button type="button" class="btn" id="enhanceBtn">Run Enhance</button>
+            </div>
+
+            <button type="button" class="btn" id="tmplBtn">Templates</button>
+            <button type="button" class="btn" id="mergeVarsBtn">Merge Vars</button>
+
+            <div class="seg">
+              <label class="seg-label">Emojis</label>
+              <select id="emojiPick" class="btn">
+                <option value="">Pick</option>
+                <option>✨</option><option>🔥</option><option>💡</option><option>🎯</option>
+                <option>🚀</option><option>🎁</option><option>✅</option><option>📣</option>
+              </select>
+              <button type="button" class="btn" id="addEmojiBtn">Add Emoji</button>
+            </div>
+
+            <button type="button" class="btn" id="copyBtn">Copy Detailed</button>
+            <button type="button" class="btn" id="copyConciseBtn">Copy Concise</button>
+            <button type="button" class="btn" id="exportTxtBtn">Export TXT</button>
+            <button type="button" class="btn" id="exportPdfBtn">Export PDF</button>
+            <button type="button" class="btn" id="splitBtn">Split View</button>
+
+            <span id="msg" class="msg"></span>
+          </div>
+
+          <!-- Usage/Credits (auto-shown by JS) -->
+          <div class="usagebar" id="usageBar" style="display:none">
+            <span id="usageBadge"></span>
+            <span id="resetTimerUsage"></span>
+          </div>
+          <div class="usagebar" id="creditsBar" style="display:none">
+            <span id="creditsBadge"></span>
+            <span id="resetTimerCredits"></span>
+          </div>
+        </div>
+      </form>
+
+      <!-- Datalists -->
+      <datalist id="audList">
+        <option>Filipino freelancers</option><option>Gen Z TikTok users</option>
+        <option>Health-conscious adults</option><option>Small business owners</option>
+        <option>Parents</option><option>Students</option><option>Remote workers</option>
+        <option>OFWs</option><option>Beginner content creators</option><option>Budget-conscious buyers</option>
+      </datalist>
+      <datalist id="toneList">
+        <option>Friendly</option><option>Professional</option><option>Playful</option><option>Authoritative</option>
+        <option>Inspirational</option><option>Conversational</option><option>Witty</option><option>Empathetic</option>
+        <option>Energizing</option><option>Neutral</option>
+      </datalist>
+      <datalist id="goalList">
+        <option>Facebook post</option><option>Instagram caption</option><option>TikTok script</option>
+        <option>YouTube script</option><option>LinkedIn post</option><option>Blog outline</option>
+        <option>Ad copy</option><option>Email newsletter</option><option>Product description</option>
+        <option>Landing page copy</option>
+      </datalist>
+      <datalist id="platList">
+        <option>Facebook</option><option>Instagram Feed</option><option>Instagram Reels</option><option>TikTok</option>
+        <option>YouTube</option><option>LinkedIn</option><option>Website / Blog</option><option>Email</option>
+        <option>X (Twitter)</option><option>Shopee</option><option>Lazada</option><option>Stories / Carousel</option>
+      </datalist>
+      <datalist id="brandList">
+        <option>witty, premium</option><option>playful, helpful</option><option>professional, trustworthy</option>
+        <option>inspirational, human</option><option>authoritative, expert</option><option>friendly, approachable</option>
+        <option>minimalist, clean</option><option>luxury, elegant</option><option>bold, edgy</option><option>casual, Gen Z</option>
+      </datalist>
+
+      <!-- Output + Favorites -->
+      <div id="splitHost" class="split-host open">
+        <div class="split-col">
+          <div class="panel">
+            <h3 style="display:flex;align-items:center;gap:.5rem;">
+              Output Prompt (Detailed)
+              <span id="badge-detailed" class="badge" style="display:none;"></span>
+              <button class="btn ghost" id="saveFavBtn" style="margin-left:auto;">★ Save to Favorites</button>
+            </h3>
+            <textarea id="output" rows="14"></textarea>
+          </div>
+          <div class="panel">
+            <h3>Favorites</h3>
+            <div id="favoritesList" class="favorites"></div>
+          </div>
+        </div>
+        <div class="split-col">
+          <div class="panel">
+            <h3>Concise Prompt (Copy-ready) <span id="badge-concise"></span></h3>
+            <textarea id="outputConcise" rows="14"></textarea>
+          </div>
+          <div class="panel">
+            <h3>Activity Log</h3>
+            <table class="log"><tbody id="activityBody"></tbody></table>
+          </div>
+        </div>
+      </div>
     </div>
 
-    {% if show_usage %}
-      <div id="usageBar" class="usagebar" style="display:none">
-        <span id="usageBadge" class="badge">Usage: –</span>
-        {% if show_timer %}<span id="resetTimerUsage" class="small">Resets in: –</span>{% endif %}
+    <!-- Templates Modal -->
+    <div class="modal" id="tmplModal" style="display:none">
+      <div class="modal-card">
+        <div class="modal-head">
+          <div>
+            <h3 class="m-title">Templates</h3>
+            <div class="m-sub">Pick a template and apply to the form.</div>
+          </div>
+          <button class="btn" id="tmplClose">Close</button>
+        </div>
+        <div class="modal-toolbar">
+          <input class="m-input" id="tmplSearch" placeholder="Search templates…" />
+          <select class="m-input" id="tmplCat"></select>
+        </div>
+        <div class="modal-body">
+          <div class="tmpl-list" id="tmplList"></div>
+          <div>
+            <div class="tmpl-preview empty" id="tmplPreview">Select a template to preview…</div>
+            <div class="tmpl-actions">
+              <button class="btn primary" id="tmplApply" disabled>Apply</button>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
 
-      <div id="creditsBar" class="usagebar" style="display:none">
-        <span id="creditsBadge" class="badge">Credits: –</span>
-        {% if show_timer %}<span id="resetTimerCredits" class="small">Resets in: –</span>{% endif %}
+    <!-- Signup Modal -->
+    <div class="modal" id="signupModal" style="display:none">
+      <div class="modal-card">
+        <div class="modal-head">
+          <div>
+            <h3 class="m-title">🎁 Get 300 Free Prompts</h3>
+            <div class="m-sub">Enter your email and we’ll send the download link.</div>
+          </div>
+          <button class="btn" id="signupClose">Close</button>
+        </div>
+        <div class="modal-body" style="grid-template-columns:1fr;">
+          <label>Email address</label>
+          <input class="m-input" id="signupEmail" type="email" placeholder="you@email.com" />
+          <div class="tmpl-actions" style="justify-content:flex-start;gap:8px;margin-top:10px;">
+            <button class="btn primary" id="signupSubmit">Claim Now</button>
+            <span id="signupMsg" class="msg"></span>
+          </div>
+          <div class="m-sub" style="margin-top:8px;">We’ll also send occasional updates. Unsubscribe anytime.</div>
+        </div>
       </div>
-    {% endif %}
-  </form>
-</section>
+    </div>
 
-<section class="panel">
-  <h3>Output Prompt (Detailed)</h3>
-  <textarea id="output" rows="10"></textarea>
-</section>
+    <script>
+      window.ENABLE_GPT = {{ enable_gpt | tojson }};
+      window.ROLLOVER_MODE = {{ rollover_mode | tojson }};
+      window.CAPTURE_REQUIRED = {{ capture_required | tojson }};
+      window.FREE_PROMPTS_URL = {{ free_prompts_url | tojson }};
+      window.UPGRADE_URL = {{ gumroad_checkout_url | tojson }};
+    </script>
+    <script src="/static/app.js?v={{ build_id }}"></script>
+  </body>
+</html>
 
-<section class="panel">
-  <h3>Concise Prompt (Copy-ready)</h3>
-  <textarea id="outputConcise" rows="10"></textarea>
-</section>
 
-<section class="panel">
-  <h3>My Presets (local to this browser)</h3>
-  <div id="presetList"></div>
-</section>
 
-<section class="panel">
-  <h3>History</h3>
-  <div id="history"></div>
-</section>
-{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

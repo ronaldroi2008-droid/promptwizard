@@ -1,0 +1,309 @@
+[
+  {
+    "title": "Facebook Post - Product Launch",
+    "category": "Facebook",
+    "preview": "Create a Facebook post announcing a new product for {{audience}}. Tone: Friendly. Include CTA + 2 trending hashtags.",
+    "fill": {
+      "audience": "Filipino freelancers",
+      "tone": "Friendly",
+      "goal": "Facebook post",
+      "platform": "Facebook",
+      "language": "English",
+      "constraints": "Short, catchy, with CTA",
+      "brand": "premium, witty"
+    },
+    "details": "Organic soap ₱199. Highlight natural ingredients."
+  },
+  {
+    "title": "Instagram Caption - Giveaway",
+    "category": "Instagram",
+    "preview": "Write 3 Instagram captions for {{audience}} announcing a giveaway. Use emojis and hashtags.",
+    "fill": {
+      "audience": "Gen Z creators",
+      "tone": "Playful",
+      "goal": "Instagram caption",
+      "platform": "Instagram",
+      "language": "Taglish",
+      "constraints": "≤120 chars, 3 emojis",
+      "brand": "fun, youthful"
+    },
+    "details": "Mechanics: follow + tag 3 friends. Winner Friday!"
+  },
+  {
+    "title": "TikTok Script - Tutorial (30s)",
+    "category": "TikTok",
+    "preview": "Create a 30-sec TikTok how-to script for {{audience}} with a hook, 3 steps, and CTA.",
+    "fill": {
+      "audience": "Beginners in Canva",
+      "tone": "Energetic",
+      "goal": "TikTok script",
+      "platform": "TikTok",
+      "language": "English",
+      "constraints": "Hook + 3 steps + CTA",
+      "brand": "helpful"
+    },
+    "details": "Topic: How to make viral posters. Mention free template."
+  },
+  {
+    "title": "YouTube Script - Product Review (5 min)",
+    "category": "YouTube",
+    "preview": "Write a 5-min YouTube product review for {{audience}}. Include pros, cons, and verdict.",
+    "fill": {
+      "audience": "Budget-conscious buyers",
+      "tone": "Informative",
+      "goal": "YouTube review",
+      "platform": "YouTube",
+      "language": "English",
+      "constraints": "Objective tone, timestamps",
+      "brand": "trustworthy"
+    },
+    "details": "Compare mid-range phones under ₱15k."
+  },
+  {
+    "title": "LinkedIn Post - Founder Insight",
+    "category": "LinkedIn",
+    "preview": "Write a LinkedIn post for {{audience}} sharing a practical insight. Use 3 bullets + 1 question.",
+    "fill": {
+      "audience": "Startup founders",
+      "tone": "Authoritative",
+      "goal": "LinkedIn post",
+      "platform": "LinkedIn",
+      "language": "English",
+      "constraints": "3 bullets + 1 question",
+      "brand": "expert, human"
+    },
+    "details": "Topic: Hiring your first marketer in a lean team."
+  },
+  {
+    "title": "Blog Outline - SEO Intro",
+    "category": "Blog",
+    "preview": "Create a blog outline for {{audience}} with H2/H3 and 3 target keywords.",
+    "fill": {
+      "audience": "Small business owners",
+      "tone": "Informative",
+      "goal": "Blog outline",
+      "platform": "Website",
+      "language": "English",
+      "constraints": "H2/H3 + meta description",
+      "brand": "educational"
+    },
+    "details": "Topic: Benefits of AI tools for marketing."
+  },
+  {
+    "title": "Email Subject Lines - Flash Sale",
+    "category": "Email",
+    "preview": "Write 10 subject lines for {{audience}}. Include urgency, % discount, and one emoji.",
+    "fill": {
+      "audience": "Ecommerce shoppers",
+      "tone": "Persuasive",
+      "goal": "Email subject lines",
+      "platform": "Email",
+      "language": "English",
+      "constraints": "≤45 chars, 1 emoji",
+      "brand": "bold"
+    },
+    "details": "Flash sale 24 hours only. 30% OFF sitewide."
+  },
+  {
+    "title": "Product Description - Shopee/Lazada",
+    "category": "Ecommerce",
+    "preview": "Write a product listing for {{audience}} with features, benefits, specs, and FAQ.",
+    "fill": {
+      "audience": "Online shoppers PH",
+      "tone": "Clear",
+      "goal": "Product description",
+      "platform": "Shopee/Lazada",
+      "language": "English",
+      "constraints": "Bulleted, scannable",
+      "brand": "practical"
+    },
+    "details": "Item: Minimalist LED desk lamp with 3 color temps."
+  },
+  {
+    "title": "Twitter/X Thread - Tips (5 tweets)",
+    "category": "Twitter/X",
+    "preview": "Create a 5-tweet thread for {{audience}} with a hook, tips, CTA, and hashtags.",
+    "fill": {
+      "audience": "Freelance designers",
+      "tone": "Actionable",
+      "goal": "Twitter thread",
+      "platform": "Twitter",
+      "language": "English",
+      "constraints": "≤280 chars per tweet",
+      "brand": "friendly"
+    },
+    "details": "Topic: Pricing your design services the smart way."
+  },
+  {
+    "title": "Ad Copy - Facebook Primary Text + Headline",
+    "category": "Ads",
+    "preview": "Write 3 variations of FB ad primary text + headline for {{audience}}.",
+    "fill": {
+      "audience": "SMB owners",
+      "tone": "Persuasive",
+      "goal": "Facebook post",
+      "platform": "Facebook Ads",
+      "language": "English",
+      "constraints": "Comply with ad policies, include CTA",
+      "brand": "trusted"
+    },
+    "details": "Offer: Free 7-day trial of social media scheduler."
+  },
+  {
+    "title": "Landing Page - Hero & CTA",
+    "category": "Website",
+    "preview": "Write a landing page hero section for {{audience}} with headline, subhead, 3 bullets, and a strong CTA.",
+    "fill": {
+      "audience": "Small teams",
+      "tone": "Persuasive",
+      "goal": "Landing page copy",
+      "platform": "Website",
+      "language": "English",
+      "constraints": "≤14-word headline, benefit-led",
+      "brand": "clear, credible"
+    },
+    "details": "Offer: AI social media calendar. CTA: Start free."
+  },
+  {
+    "title": "Press Release - New Feature",
+    "category": "PR",
+    "preview": "Draft a concise press release for {{audience}} announcing a new feature. Include quote and boilerplate.",
+    "fill": {
+      "audience": "Tech media and users",
+      "tone": "Professional",
+      "goal": "Press release",
+      "platform": "Web/PR",
+      "language": "English",
+      "constraints": "400–600 words, AP style hints",
+      "brand": "authoritative"
+    },
+    "details": "Feature: 1-click content repurposing to 10 formats."
+  },
+  {
+    "title": "SMS Campaign - Flash Sale",
+    "category": "SMS",
+    "preview": "Write 3 short SMS messages for {{audience}} with urgency, discount, and clear CTA (with short link placeholder).",
+    "fill": {
+      "audience": "Existing customers",
+      "tone": "Urgent",
+      "goal": "SMS copy",
+      "platform": "SMS",
+      "language": "English",
+      "constraints": "≤150 characters each",
+      "brand": "direct"
+    },
+    "details": "Sale: 30% OFF ends tonight. Link: {{short_link}}."
+  },
+  {
+    "title": "WhatsApp Broadcast - Product Drop",
+    "category": "WhatsApp",
+    "preview": "Create a WhatsApp broadcast message for {{audience}} announcing a product drop with teaser image caption and CTA.",
+    "fill": {
+      "audience": "VIP customers PH",
+      "tone": "Friendly",
+      "goal": "Broadcast message",
+      "platform": "WhatsApp",
+      "language": "Taglish",
+      "constraints": "1–2 short paragraphs + CTA",
+      "brand": "premium"
+    },
+    "details": "Drop: Limited edition tote bag. Early access code: VIP10."
+  },
+  {
+    "title": "Webinar Invitation Email",
+    "category": "Email",
+    "preview": "Write an invitation email for {{audience}} to join a webinar. Include value bullets and RSVP CTA.",
+    "fill": {
+      "audience": "Marketing managers",
+      "tone": "Informative",
+      "goal": "Email invite",
+      "platform": "Email",
+      "language": "English",
+      "constraints": "Subject + preview text + body",
+      "brand": "helpful"
+    },
+    "details": "Topic: AI playbook for Q4 content. Date/time + Zoom link."
+  },
+  {
+    "title": "SEO Meta Title & Description",
+    "category": "SEO",
+    "preview": "Generate 5 SEO meta titles and descriptions for {{audience}} targeting 3 keywords.",
+    "fill": {
+      "audience": "Searchers researching AI tools",
+      "tone": "Informative",
+      "goal": "SEO metadata",
+      "platform": "Website",
+      "language": "English",
+      "constraints": "Title ≤60 chars, Desc ≤155 chars",
+      "brand": "trustworthy"
+    },
+    "details": "Keywords: social media AI, content planner, automate posts."
+  },
+  {
+    "title": "Pinterest Pin Description - Listicle Teaser",
+    "category": "Pinterest",
+    "preview": "Write 3 Pinterest descriptions for {{audience}} teasing a listicle. Include keywords and CTA to read blog.",
+    "fill": {
+      "audience": "DIY crafters",
+      "tone": "Inspirational",
+      "goal": "Pin description",
+      "platform": "Pinterest",
+      "language": "English",
+      "constraints": "Keyword-rich, scannable",
+      "brand": "creative"
+    },
+    "details": "Article: 10 budget-friendly craft ideas using recyclables."
+  },
+  {
+    "title": "Threads Post - Conversational Q&A",
+    "category": "Threads",
+    "preview": "Create 4 Threads posts for {{audience}} that ask a question, share one insight, and invite replies.",
+    "fill": {
+      "audience": "Creators",
+      "tone": "Conversational",
+      "goal": "Threads posts",
+      "platform": "Threads",
+      "language": "English",
+      "constraints": "Keep casual, reply-friendly",
+      "brand": "human"
+    },
+    "details": "Theme: Breaking creative block with tiny habits."
+  },
+  {
+    "title": "Twitter/X Bio + Pinned Tweet",
+    "category": "Twitter/X",
+    "preview": "Write a compelling bio + 1 pinned tweet for {{audience}} that clarifies value, credibility, and CTA.",
+    "fill": {
+      "audience": "Freelance copywriters",
+      "tone": "Witty",
+      "goal": "Profile optimization",
+      "platform": "Twitter",
+      "language": "English",
+      "constraints": "Bio ≤160 chars, tweet ≤280",
+      "brand": "bold"
+    },
+    "details": "Offer: newsletter sign-up CTA with free swipe file."
+  },
+  {
+    "title": "Google Ads - Responsive Search Ad",
+    "category": "Ads",
+    "preview": "Create an RSA set for {{audience}}: 12 headlines + 4 descriptions using given keywords.",
+    "fill": {
+      "audience": "SMB owners",
+      "tone": "Direct",
+      "goal": "Google Ads RSA",
+      "platform": "Google Ads",
+      "language": "English",
+      "constraints": "Headlines ≤30, Descriptions ≤90",
+      "brand": "trusted"
+    },
+    "details": "Keywords: social media scheduler, auto-post, AI captions."
+  }
+]
+
+
+
+
+
+
+

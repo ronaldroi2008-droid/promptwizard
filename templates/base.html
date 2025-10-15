@@ -1,18 +1,133 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{{ app_name }}</title>
+
+  <!-- SEO / Social basics -->
+  <meta name="description" content="Prompt Wizard — your personal AI prompt assistant for building and refining prompts fast."/>
+  <meta property="og:title" content="{{ app_name }}"/>
+  <meta property="og:description" content="Build better prompts in seconds. Free & Paid tiers."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="/static/og.png?v={{ build_id }}"/>
+
+  <!-- Early theme boot BEFORE CSS -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('pz_theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = saved || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+    })();
+  </script>
+
+  <link rel="icon" href="/static/favicon.png" />
   <link rel="stylesheet" href="/static/styles.css?v={{ build_id }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  {% if gtm_id %}
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','{{ gtm_id }}');</script>
+  {% endif %}
+
+  {% if fb_pixel_id %}
+  <script>
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+  (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init','{{ fb_pixel_id }}'); fbq('track','PageView');
+  </script>
+  <noscript><img height="1" width="1" src="https://www.facebook.com/tr?id={{ fb_pixel_id }}&ev=PageView&noscript=1"/></noscript>
+  {% endif %}
 </head>
 <body>
-  <div class="wrap">
-    <h1 class="title">{{ app_name }} <span class="pill">{{ "PAID" if rollover_mode else "FREE" }}</span></h1>
-    <p class="subtitle">Form-based AI prompt builder. Offline builder + optional GPT enhancement.</p>
-    {% block content %}{% endblock %}
-    <footer><p class="muted">© {{ year }} Prompt Wizard</p></footer>
+  {% if gtm_id %}<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_id }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>{% endif %}
+
+  <header class="brandbar">
+    <div class="brand-left">
+      <div class="logo">✨</div>
+      <div class="brand-text">
+        <div class="brand-title">{{ app_name }}</div>
+        <div class="brand-sub">Your personal AI Prompt Assistant</div>
+      </div>
+    </div>
+    <div class="brand-right">
+      <a href="/free" class="btn cta sm:hidden">🎁 300 Free Prompts</a>
+
+      {% if gumroad_checkout_url %}
+        <a href="{{ gumroad_checkout_url }}" target="_blank" rel="noopener" class="btn primary">⬆️ Upgrade</a>
+      {% else %}
+        <a href="#" class="btn primary" style="pointer-events:none;opacity:.5" title="Set GUMROAD_CHECKOUT_URL in .env">⬆️ Upgrade</a>
+      {% endif %}
+
+      <span class="pill">{{ "PAID" if rollover_mode else "FREE" }}</span>
+      <button id="themeToggle" class="btn ghost" type="button"><span id="themeLabel">🌙 Dark</span></button>
+    </div>
+  </header>
+
+  {% if not rollover_mode %}
+  <div class="ribbon">
+    🎁 New here? Get <strong>300 Free Prompts</strong> instantly —
+    <a href="/free" class="link">grab your copy</a>.
   </div>
+  {% endif %}
+
+  <main class="wrap">
+    {% block content %}{% endblock %}
+    <footer class="footer">
+      <p>© {{ year }} Prompt Wizard • We only use your email to send your free prompts and product updates. Unsubscribe anytime.</p>
+    </footer>
+  </main>
+
+  <script>
+    // expose flags to app.js
+    window.CAPTURE_REQUIRED = {{ 1 if capture_required else 0 }};
+    window.ROLLOVER_MODE    = {{ 1 if rollover_mode else 0 }};
+    window.ENABLE_GPT       = {{ 1 if enable_gpt else 0 }};
+
+    // theme toggle label reflects current theme
+    (function(){
+      var btn = document.getElementById('themeToggle');
+      var label = document.getElementById('themeLabel');
+      function setLabel(){
+        var t = document.documentElement.getAttribute('data-theme') || 'light';
+        label.textContent = t === 'dark' ? '☀️ Light' : '🌙 Dark';
+      }
+      setLabel();
+      btn && btn.addEventListener('click', function(){
+        var t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+        try { localStorage.setItem('pz_theme', t); } catch(_){}
+        setLabel();
+      });
+    })();
+  </script>
+
   <script src="/static/app.js?v={{ build_id }}"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

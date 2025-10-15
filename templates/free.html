@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel">
+  <h2>🎁 Get 300 Free Prompts</h2>
+  <p>Enter your email to receive the download link instantly.</p>
+  <form id="freeForm" onsubmit="return false;" class="free-form">
+    <input id="freeEmail" type="email" placeholder="you@example.com" required class="input" />
+    <button id="freeBtn" type="button" class="btn primary">Send me the link</button>
+    <span id="freeMsg" class="msg"></span>
+  </form>
+  <p class="small">We only use your email to send download link + updates. Unsubscribe anytime.</p>
+</section>
+<script>
+  (function(){
+    const btn = document.getElementById('freeBtn');
+    const email = document.getElementById('freeEmail');
+    const msg = document.getElementById('freeMsg');
+    btn?.addEventListener('click', async () => {
+      const v = (email.value||'').trim();
+      if(!v) { msg.textContent='Please enter email'; msg.className='msg err'; return; }
+      const r = await fetch('/api/signup', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ email: v, source: 'free' })
+      });
+      const data = await r.json();
+      if(data?.ok){
+        msg.textContent='Check your email (or use link below).';
+        msg.className='msg ok';
+        if(data.download_url){
+          const a = document.createElement('a');
+          a.href = data.download_url; a.textContent = 'Download now';
+          a.className='link'; a.style.marginLeft='8px';
+          msg.appendChild(a);
+        }
+      } else {
+        msg.textContent = data?.error || 'Signup failed';
+        msg.className='msg err';
+      }
+    });
+  })();
+</script>
+{% endblock %}
+
+
+
+

@@ -1,11 +1,14 @@
-﻿.venv/
+﻿# secrets / local
+.env
+.env.paid
+prompts.db
+prompts_paid.db
+
+# python
+.venv/
 __pycache__/
 *.pyc
-.env
-*.env
-*.db
-*.sqlite
-*.sqlite3
-.DS_Store
-Thumbs.db
+
+# editor/system
 .vscode/
+.DS_Store
