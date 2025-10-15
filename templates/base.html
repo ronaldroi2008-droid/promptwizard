@@ -1,18 +1,67 @@
 <!doctype html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{{ app_name }}</title>
-  <link rel="stylesheet" href="/static/styles.css?v={{ build_id }}" />
-</head>
-<body>
-  <div class="wrap">
-    <h1 class="title">{{ app_name }} <span class="pill">{{ "PAID" if rollover_mode else "FREE" }}</span></h1>
-    <p class="subtitle">Form-based AI prompt builder. Offline builder + optional GPT enhancement.</p>
-    {% block content %}{% endblock %}
-    <footer><p class="muted">© {{ year }} Prompt Wizard</p></footer>
-  </div>
-  <script src="/static/app.js?v={{ build_id }}"></script>
-</body>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ app_name }}</title>
+    <link rel="stylesheet" href="/static/styles.css?v={{ build_id }}">
+  </head>
+  <body>
+    <!-- Brand bar -->
+    <div class="brandbar">
+      <div class="brand-left">
+        <div class="logo">✨</div>
+        <div>
+          <div class="brand-title">{{ app_name }}</div>
+          <div class="brand-sub">Form-based AI prompt builder. Offline builder + optional GPT enhancement.</div>
+        </div>
+      </div>
+      <div class="brand-right">
+        {% if capture_required or free_prompts_url %}
+          <a class="pill" id="ctaFree" href="javascript:void(0)">🎁 300 Free Prompts</a>
+        {% endif %}
+        <span class="pill" id="planBadge">{{ 'PAID' if rollover_mode else 'FREE' }}</span>
+        {% if gumroad_checkout_url %}
+          <a class="pill primary" id="upgradeBtn" href="{{ gumroad_checkout_url }}" target="_blank" rel="noopener">⬆️ Upgrade</a>
+        {% endif %}
+        <button class="pill" id="themeToggle">🌙 Dark</button>
+      </div>
+    </div>
+
+    <div class="wrap">
+      {% block content %}{% endblock %}
+    </div>
+
+    <!-- Signup Modal (for 300 Free Prompts capture) -->
+    <div class="modal" id="signupModal" style="display:none">
+      <div class="modal-card">
+        <div class="modal-head">
+          <div>
+            <h3 class="m-title">🎁 Get 300 Free Prompts</h3>
+            <div class="m-sub">Enter your email and we’ll send the download link.</div>
+          </div>
+          <button class="btn" id="signupClose">Close</button>
+        </div>
+        <div class="modal-body" style="grid-template-columns:1fr;">
+          <label>Email address</label>
+          <input class="m-input" id="signupEmail" type="email" placeholder="you@email.com" />
+          <div class="tmpl-actions" style="justify-content:flex-start;gap:8px;margin-top:10px;">
+            <button class="btn primary" id="signupSubmit">Claim Now</button>
+            <span id="signupMsg" class="msg"></span>
+          </div>
+          <div class="m-sub" style="margin-top:8px;">We’ll also send occasional updates. Unsubscribe anytime.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flags from backend -->
+    <script>
+      window.ENABLE_GPT       = {{ enable_gpt | tojson }};
+      window.ROLLOVER_MODE    = {{ rollover_mode | tojson }};
+      window.CAPTURE_REQUIRED = {{ capture_required | tojson }};
+      window.FREE_PROMPTS_URL = {{ free_prompts_url | tojson }};
+    </script>
+    <script src="/static/app.js?v={{ build_id }}"></script>
+  </body>
 </html>
+
