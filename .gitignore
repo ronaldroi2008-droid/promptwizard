@@ -1,14 +1,24 @@
-﻿# secrets / local
-.env
-.env.paid
-prompts.db
-prompts_paid.db
-
-# python
+﻿# Python
 .venv/
 __pycache__/
 *.pyc
+*.pyo
 
-# editor/system
-.vscode/
+# Builds / Artifacts
+dist/
+build/
+*.spec
+
+# Databases & local state
+*.db
+
+# Secrets
+.env
+.env.paid
+
+# OS / editor junk
 .DS_Store
+Thumbs.db
+
+# Frontend caches (kung meron)
+node_modules/
